@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#195f50"><title>Routine Analytics</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="app.js"></script>
+</head>
+<body>
+<main id="authScreen" class="auth-shell">
+  <section class="auth-card">
+    <div class="brand-symbol">RA</div><p class="eyebrow">YOUR PERSONAL WORKSPACE</p>
+    <h1>Routine Analytics</h1><p class="subtle">Plan your day. Build better routines.</p>
+    <div class="auth-tabs"><button id="loginTab" class="auth-tab active" type="button">Log in</button><button id="signupTab" class="auth-tab" type="button">Create account</button></div>
+    <form id="authForm">
+      <label>Email address<input id="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+      <label>Password<input id="password" type="password" minlength="6" autocomplete="current-password" placeholder="At least 6 characters" required></label>
+      <button id="authSubmit" class="button primary wide" type="submit">Log in</button>
+      <button id="forgotPassword" class="link-button wide" type="button">Forgot password?</button>
+    </form>
+    <div class="divider"><span>OR</span></div>
+    <button id="demoButton" class="button secondary wide" type="button">Explore the free demo</button>
+    <p class="tiny center">No SMS, no phone OTP, no paid messaging service.</p>
+    <p id="authMessage" class="message" role="status"></p>
+    <p class="tiny center">Demo data stays in this browser. Cloud accounts need your free Supabase setup.</p>
+  </section>
+</main>
+<div id="appScreen" class="app-shell hidden">
+  <aside class="sidebar">
+    <div class="brand-lockup"><div class="brand-symbol small">RA</div><div><strong>Routine</strong><span>Analytics</span></div></div>
+    <p class="side-heading">WORKSPACE</p>
+    <button class="nav-button active" data-page="dashboard" type="button"><span class="nav-icon">⌂</span>Dashboard</button>
+    <button class="nav-button" data-page="tasks" type="button"><span class="nav-icon">☷</span>My tasks</button>
+    <button class="nav-button" data-page="analytics" type="button"><span class="nav-icon">▥</span>Analytics</button>
+    <div class="sidebar-note"><span class="note-icon">✦</span><div><b>Small steps matter.</b><p>Stay consistent, not perfect.</p></div></div>
+    <div class="account-row"><div class="avatar" id="userAvatar">D</div><div class="account-copy"><b id="userLabel">Demo user</b><span id="modeLabel">Local demo</span></div><button id="logoutButton" class="icon-button" title="Exit workspace" aria-label="Exit workspace">↗</button></div>
+  </aside>
+  <main class="main-content">
+    <header class="topbar"><div><p class="eyebrow" id="dateLabel">YOUR WORKSPACE</p><h2 id="pageTitle">Dashboard</h2></div><div class="top-actions"><button id="reminderButton" class="button secondary" type="button">♧ Enable reminders</button><button id="addTaskButton" class="button primary" type="button">＋ Add task</button></div></header>
+    <div id="demoBanner" class="demo-banner hidden"><span>ⓘ</span><div><b>Local demo mode</b> — tasks save in this browser only. Configure Supabase to enable cloud accounts and cloud storage.</div></div>
+    <section id="dashboardPage" class="page">
+      <div class="hero-card"><div><p class="eyebrow inverse">A LITTLE PROGRESS ADDS UP</p><h1>Make today count.</h1><p>Keep your routine clear, focused and achievable.</p></div><div class="hero-mark" aria-hidden="true">✦</div></div>
+      <div class="stats-grid">
+        <article class="stat-card"><div class="stat-top"><span>Total tasks</span><span class="stat-icon">▤</span></div><strong id="totalStat">0</strong><small>In your workspace</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Completed</span><span class="stat-icon green">✓</span></div><strong id="completedStat">0</strong><small>Tasks finished</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Pending</span><span class="stat-icon amber">◷</span></div><strong id="pendingStat">0</strong><small>Still on your list</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Completion rate</span><span class="stat-icon violet">↗</span></div><strong id="rateStat">0%</strong><div class="progress-track"><span id="rateBar"></span></div></article>
+      </div>
+      <div class="dashboard-grid"><section class="panel"><div class="panel-heading"><div><h3>Upcoming tasks</h3><p class="subtle">What is next on your list</p></div><button class="inline-link" data-goto="tasks" type="button">View all →</button></div><div id="upcomingList" class="task-list"></div></section>
+      <section class="panel focus-panel"><div class="panel-heading"><div><h3>Daily focus</h3><p class="subtle">Progress, not perfection.</p></div></div><div class="focus-ring" id="focusRing"><div><strong id="focusRate">0%</strong><span>completed</span></div></div><p class="focus-copy" id="focusText">Add your first task to get started.</p><div class="focus-tip"><span>✧</span><p><b>Quick tip</b><br>Pick one important task and start there.</p></div></section></div>
+    </section>
+    <section id="tasksPage" class="page hidden"><div class="toolbar"><input id="searchInput" type="search" placeholder="⌕  Search your tasks…" aria-label="Search tasks"><select id="statusFilter" aria-label="Filter by status"><option value="all">All statuses</option><option value="pending">Pending</option><option value="completed">Completed</option></select><select id="priorityFilter" aria-label="Filter by priority"><option value="all">All priorities</option><option value="High">High priority</option><option value="Medium">Medium priority</option><option value="Low">Low priority</option></select><select id="categoryFilter" aria-label="Filter by category"><option value="all">All categories</option><option>Study</option><option>Work</option><option>Personal</option><option>Health</option><option>Coding</option><option>Other</option></select></div><section class="panel"><div class="panel-heading"><div><h3>All tasks</h3><p class="subtle">Your tasks, in one place.</p></div><span id="taskCount" class="count-badge">0 tasks</span></div><div id="allTasksList" class="task-list"></div></section></section>
+    <section id="analyticsPage" class="page hidden"><div class="stats-grid three"><article class="stat-card"><div class="stat-top"><span>Completion rate</span><span class="stat-icon green">✓</span></div><strong id="analyticsRate">0%</strong><small>Across your tasks</small></article><article class="stat-card"><div class="stat-top"><span>High priority pending</span><span class="stat-icon amber">!</span></div><strong id="highStat">0</strong><small>Tasks needing attention</small></article><article class="stat-card"><div class="stat-top"><span>Overdue</span><span class="stat-icon rose">◷</span></div><strong id="overdueStat">0</strong><small>Pending past due time</small></article></div>
+      <section class="panel chart-panel"><div class="panel-heading"><div><h3>Task breakdown</h3><p class="subtle">Based on records in your workspace.</p></div></div><div class="chart-row"><label>Completed</label><div class="chart-track"><span id="completedBar"></span></div><b id="completedBarLabel">0</b></div><div class="chart-row"><label>Pending</label><div class="chart-track"><span id="pendingBar"></span></div><b id="pendingBarLabel">0</b></div><div class="chart-row"><label>High priority</label><div class="chart-track"><span id="highBar"></span></div><b id="highBarLabel">0</b></div></section>
+      <section class="panel chart-panel"><div class="panel-heading"><div><h3>Category distribution</h3><p class="subtle">Which areas your tasks belong to.</p></div></div><div id="categoryBreakdown" class="category-breakdown"></div></section>
+    </section>
+    <p id="appMessage" class="message app-message" role="status"></p>
+  </main>
+</div>
+<dialog id="taskDialog" class="modal"><form id="taskForm" class="modal-form"><div class="modal-heading"><div><p class="eyebrow">TASK DETAILS</p><h3 id="taskDialogTitle">Add a task</h3></div><button id="closeTaskDialog" class="icon-button" type="button" aria-label="Close">✕</button></div>
+<input id="taskId" type="hidden"><label>Task name<input id="taskTitle" maxlength="120" required placeholder="e.g. Revise Enterprise Java"></label><label>Notes <span class="optional">(optional)</span><textarea id="taskNotes" rows="3" placeholder="Add context or a short checklist…"></textarea></label>
+<div class="form-grid"><label>Category<select id="taskCategory"><option>Study</option><option>Work</option><option>Personal</option><option>Health</option><option>Coding</option><option>Other</option></select></label><label>Priority<select id="taskPriority"><option>Medium</option><option>High</option><option>Low</option></select></label></div>
+<div class="form-grid"><label>Due date<input id="taskDate" type="date"></label><label>Due time<input id="taskTime" type="time"></label></div><label class="checkbox-label"><input id="taskCompleted" type="checkbox"> Mark as completed</label><p id="taskMessage" class="message"></p><div class="modal-actions"><button id="cancelTask" class="button secondary" type="button">Cancel</button><button class="button primary" type="submit">Save task</button></div></form></dialog>
+<dialog id="resetDialog" class="modal small-modal"><form id="resetForm" class="modal-form"><div class="modal-heading"><div><p class="eyebrow">ACCOUNT SECURITY</p><h3>Set a new password</h3></div><button id="closeResetDialog" class="icon-button" type="button" aria-label="Close">✕</button></div><p class="subtle">Choose a new password for your account.</p><label>New password<input id="newPassword" type="password" minlength="6" required autocomplete="new-password"></label><label>Confirm password<input id="confirmPassword" type="password" minlength="6" required autocomplete="new-password"></label><p id="resetMessage" class="message"></p><div class="modal-actions"><button id="cancelReset" class="button secondary" type="button">Cancel</button><button class="button primary" type="submit">Update password</button></div></form></dialog>
+</body></html>
